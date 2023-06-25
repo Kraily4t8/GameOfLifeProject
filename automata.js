@@ -71,7 +71,7 @@ class Automata {
             this.startConfig(8);
         });
 
-        //Config2 modulus 5
+        //Config2 modulus 4
         this.Config2Button = document.getElementById('Config2');
         this.Config2Button.addEventListener('click', (e) => {
             this.startConfig(4);
