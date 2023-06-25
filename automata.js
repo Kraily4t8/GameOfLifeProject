@@ -11,8 +11,8 @@ class Automata {
         //grid background color
         //grid cell color
         //generate table of ...300 by 200 true or false
-        this.tableWidth = 50;
-        this.tableHeight = 50;
+        this.tableWidth = 150;
+        this.tableHeight = 65;
         this.cellSize = 10;
         this.tickCount = 0;
         //true means alive, false means dead
