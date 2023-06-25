@@ -41,9 +41,15 @@ class Automata {
         });
 
         //table Complement
-        this.toggleComplement = document.getElementById('tableComplementButton');
-        this.toggleComplement.addEventListener('click', (e) => {
+        this.toggleComplementButton = document.getElementById('tableComplementButton');
+        this.toggleComplementButton.addEventListener('click', (e) => {
             this.currentTable = this.generateComplement();
+        });
+
+        //Inject Life
+        this.injectLifeButton = document.getElementById('injectLifeButton');
+        this.injectLifeButton.addEventListener('click', (e) => {
+            this.currentTable = this.injectLife();
         });
 
         //gridless
@@ -62,11 +68,28 @@ class Automata {
     //return table of specified dimensions
     spawnTable() {
         let newTable = [];
+        this.spawnRateValue = parseInt(document.getElementById('spawnratePercent').value, 10) / 100;
         for (var col = 0; col < this.tableWidth; col++) {
             newTable.push([]);
             for (var row = 0; row < this.tableHeight; row++) {
-                this.spawnRateValue = parseInt(document.getElementById('spawnratePercent').value, 10) / 100;
                 newTable[col][row] = this.spawnRate(this.spawnRateValue); // = spawnRate(rate)
+            }
+        }
+        return newTable;
+    };
+
+    //inject life in preexisting table
+    injectLife() {
+        let newTable = [];
+        this.spawnRateValue = parseInt(document.getElementById('spawnratePercent').value, 10) / 100;
+        for (var col = 0; col < this.tableWidth; col++) {
+            newTable.push([]);
+            for (var row = 0; row < this.tableHeight; row++) {
+                if(!this.currentTable[col][row]) {
+                    newTable[col][row] = this.spawnRate(this.spawnRateValue); // = spawnRate(rate)
+                } else {
+                    newTable[col][row] = true;
+                }
             }
         }
         return newTable;
