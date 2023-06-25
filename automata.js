@@ -49,7 +49,7 @@ class Automata {
         for (var i = 0; i < y; i++) {
             newTable.push([]);
             for (var j = 0; j < x; j++) {
-                newTable[i][j] = 0;
+                //newTable[i][j] = 0;
             }
         }
 
@@ -72,26 +72,29 @@ class Automata {
                 if (i === x && j === y) continue;
                 const wrappedY = this.wrapValue(i,this.tableHeight);
                 const wrappedX = this.wrapValue(j,this.tableWidth);
-                if(this.currentTable[wrappedY][wrappedX] == 1) {
-                    count++;
-                }
+                count += this.currentTable[wrappedY][wrappedX];
             }
         }
         return count;
     };
 
     //return 'alive' or 'dead' depending on rules
+    //
     rules(living, count) {
-        if(living) {
-            if(count < 2 || count > 3) {
-                return 0;
-            }
-            return 1;
-        } else {
-            if(count == 3) {
+        if(living == 1 && count === 2 || count === 3) return 1;
+        if(living == 0 && count === 3) return 1;
+        return 0;
+        //if(living == 1) {
+            //if(count == 2 || count == 3) {
+            //    return 1;
+            //}
+            //return 0;
+        //} else {
+            //if(count == 3) {
                 return 1;
-            }
-        }
+            //}
+            //return 0;
+        //}
     };
 
     wrapValue(val, max) {
@@ -103,27 +106,13 @@ class Automata {
     update(){
         //speed
         let speed = 120 - parseInt(document.getElementById("speed").value, 10);
-        //if(this.once){
-            if(this.tickCount++ >= speed && speed != 120){
-                this.tickCount = 0;
-                //this.tisks++
+        if(this.tickCount++ >= speed && speed != 120){
+            this.tickCount = 0;
+            //this.tisks++
 
-                //makes new table
-                this.currentTable = this.generateNewTable(this.tableWidth,this.tableHeight); 
-                //next table * dependent on tick speed
-            }
-        //}
-
-        
-        if(this.once) {
-            this.startTime;
-        }
-
-        
-
-        if(this.once) {
-            this.once = false;
-            this.endTime;
+            //makes new table
+            this.currentTable = this.generateNewTable(this.tableWidth,this.tableHeight); 
+            //next table * dependent on tick speed
         }
     };
 
@@ -132,28 +121,16 @@ class Automata {
         //ctx.fillRect(100,100,100,100);
         let cellGap = 1;
         
-        for(var i = 0; i < this.tableHeight; i++) {
-            for(var j = 0; j < this.tableWidth; j++) {
+        for(var i = 0; i < this.tableWidth; i++) {
+            for(var j = 0; j < this.tableHeight; j++) {
                 //column * size + gap
                 //position x;           y
                 //size - gap
                 //width
-                if(this.currentTable[i][j] == 1) {
+                if(this.currentTable[i][j] === 1) {
                     ctx.fillRect(i * this.cellSize, j * this.cellSize, this.cellSize - cellGap, this.cellSize - cellGap);
                 }
             }
         }
     };
-
-    startTimer() {
-        startTime = Date.Now();
-    }
-
-    endTimer() {
-        endTime = Date.Now();;
-    }
-
-    getDuration() {
-        return endTime - startTime;
-    }
 };
