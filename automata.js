@@ -91,7 +91,7 @@ class Automata {
             //return 0;
         //} else {
             //if(count == 3) {
-                return 1;
+                //return 1;
             //}
             //return 0;
         //}
