@@ -1,6 +1,8 @@
 // This game shell was happily modified from Googler Seth Ladd's "Bad Aliens" game and his Google IO talk in 2011
 class Automata {
-    constructor() {
+    constructor(gameEngine) {
+        Object.assign(this, { gameEngine});
+        
         this.once = true;
         this.startTime;
         this.endTime;
@@ -9,8 +11,8 @@ class Automata {
         //grid background color
         //grid cell color
         //generate table of ...300 by 200 true or false
-        this.tableWidth = 150;
-        this.tableHeight = 65;
+        this.tableWidth = 50;
+        this.tableHeight = 50;
         this.cellSize = 10;
         this.tickCount = 0;
         //true means alive, false means dead
@@ -35,16 +37,23 @@ class Automata {
     };
 
     spawnRate(decimal) {
-        if(decimal > Math.random) {
-            return true;
+        //return Math.round(Math.random());
+        if(decimal > Math.random()) {
+            return 1;
         }
-        return false;
+        return 0;
     };
 
     generateNewTable(x,y) {
         let newTable = [];
         for (var i = 0; i < y; i++) {
             newTable.push([]);
+            for (var j = 0; j < x; j++) {
+                newTable[i][j] = 0;
+            }
+        }
+
+        for (var i = 0; i < y; i++) {
             for (var j = 0; j < x; j++) {
                 newTable[i][j] = this.rules(this.currentTable[i][j], this.neighborCount(i,j))
             }
@@ -58,16 +67,13 @@ class Automata {
         let count = 0;
         
         //3x3 ignore middle
-        for(var i = x - 1; i < x + 2; i++) {
-            i = this.wrapValue(i,this.tableHeight);
-            for(var j = y - 1; j < y + 2; j++) {
-                j = this.wrapValue(j,this.tableWidth);
-                if(i != x || j != y) {
-                    //console.log("i " + i + " j " + j);
-                    //console.log("currentTable " + this.currentTable[i][j]);
-                    if(this.currentTable[i][j] == true) {
-                        count++;
-                    }
+        for(var i = y - 1; i <= y + 1; i++) {
+            for(var j = x - 1; j <= x + 1; j++) {
+                if (i === x && j === y) continue;
+                const wrappedY = this.wrapValue(i,this.tableHeight);
+                const wrappedX = this.wrapValue(j,this.tableWidth);
+                if(this.currentTable[wrappedY][wrappedX] == 1) {
+                    count++;
                 }
             }
         }
@@ -78,12 +84,12 @@ class Automata {
     rules(living, count) {
         if(living) {
             if(count < 2 || count > 3) {
-                return false;
+                return 0;
             }
-            return true;
+            return 1;
         } else {
             if(count == 3) {
-                return true;
+                return 1;
             }
         }
     };
@@ -96,8 +102,8 @@ class Automata {
 
     update(){
         //speed
-        let speed = parseInt(document.getElementById("speed").value, 10);
-        if(this.once){
+        let speed = 120 - parseInt(document.getElementById("speed").value, 10);
+        //if(this.once){
             if(this.tickCount++ >= speed && speed != 120){
                 this.tickCount = 0;
                 //this.tisks++
@@ -106,7 +112,7 @@ class Automata {
                 this.currentTable = this.generateNewTable(this.tableWidth,this.tableHeight); 
                 //next table * dependent on tick speed
             }
-        }
+        //}
 
         
         if(this.once) {
@@ -118,12 +124,11 @@ class Automata {
         if(this.once) {
             this.once = false;
             this.endTime;
-            console.log(this.getDuration);
         }
     };
 
     draw(ctx) {
-        ctx.fillStyle = rgb(0,100,10);
+        ctx.fillStyle = rgb(0,0,0);
         //ctx.fillRect(100,100,100,100);
         let cellGap = 1;
         
@@ -133,10 +138,8 @@ class Automata {
                 //position x;           y
                 //size - gap
                 //width
-                console.log("i " + i + " j " + j);
-                console.log(this.currentTable[i][j]);
-                if(this.currentTable[i][j] == true) {
-                    ctx.fillRect(i * this.cellSize + cellGap, j * this.cellSize + cellGap, this.cellSize - cellGap, this.cellSize - cellGap);
+                if(this.currentTable[i][j] == 1) {
+                    ctx.fillRect(i * this.cellSize, j * this.cellSize, this.cellSize - cellGap, this.cellSize - cellGap);
                 }
             }
         }
