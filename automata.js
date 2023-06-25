@@ -16,8 +16,8 @@ class Automata {
         this.cellSize = 10;
         this.tickCount = 0;
         //true means alive, false means dead
-        this.currentTable = [];
-        this.spawnTable(this.tableWidth,this.tableHeight);
+        this.currentTable;
+        this.spawnTable();
         //toggles
         //reset
         //spawnRate
@@ -26,12 +26,12 @@ class Automata {
     };
 
     //return table of specified dimensions
-    spawnTable(x, y) {
+    spawnTable() {
         this.currentTable = [];
-        for (var i = 0; i < y; i++) {
+        for (var col = 0; col < this.tableWidth; col++) {
             this.currentTable.push([]);
-            for (var j = 0; j < x; j++) {
-                this.currentTable[i][j] = this.spawnRate(0.5); // = spawnRate(rate)
+            for (var row = 0; row < this.tableHeight; row++) {
+                this.currentTable[col][row] = this.spawnRate(0.5); // = spawnRate(rate)
             }
         }
     };
@@ -44,18 +44,13 @@ class Automata {
         return 0;
     };
 
-    generateNewTable(x,y) {
+    generateNewTable() {
         let newTable = [];
-        for (var i = 0; i < y; i++) {
-            newTable.push([]);
-            for (var j = 0; j < x; j++) {
-                //newTable[i][j] = 0;
-            }
-        }
 
-        for (var i = 0; i < y; i++) {
-            for (var j = 0; j < x; j++) {
-                newTable[i][j] = this.rules(this.currentTable[i][j], this.neighborCount(i,j))
+        for (var col = 0; col < this.tableWidth; col++) {
+            newTable.push([]);
+            for (var row = 0; row < this.tableHeight; row++) {
+                newTable[col][row] = this.rules(this.currentTable[col][row], this.neighborCount(col,row))
             }
         }
         return newTable;
@@ -63,16 +58,16 @@ class Automata {
     
     //count neighbors from old table based on position
     //when at the edges, wrap to the other side
-    neighborCount(x, y) {
+    neighborCount(col, row) {
         let count = 0;
         
         //3x3 ignore middle
-        for(var i = y - 1; i <= y + 1; i++) {
-            for(var j = x - 1; j <= x + 1; j++) {
-                if (i === x && j === y) continue;
-                const wrappedY = this.wrapValue(i,this.tableHeight);
-                const wrappedX = this.wrapValue(j,this.tableWidth);
-                count += this.currentTable[wrappedY][wrappedX];
+        for(var i = col - 1; i <= col + 1; i++) {
+            for(var j = row - 1; j <= row + 1; j++) {
+                if (i === col && j === row) continue;
+                const wrappedX = this.wrapValue(i,this.tableWidth);
+                const wrappedY = this.wrapValue(j,this.tableHeight);
+                count += this.currentTable[wrappedX][wrappedY];
             }
         }
         return count;
@@ -111,7 +106,7 @@ class Automata {
             //this.tisks++
 
             //makes new table
-            this.currentTable = this.generateNewTable(this.tableWidth,this.tableHeight); 
+            this.currentTable = this.generateNewTable(); 
             //next table * dependent on tick speed
         }
     };
