@@ -18,7 +18,8 @@ class Automata {
         this.gapSize = 2;
         this.gap = true;
         //true means alive, false means dead
-        this.currentTable = this.spawnTable();
+        this.currentTable;
+        this.spawnTable();
         this.spawnRateValue = 0.5;
         //toggles
         this.pause = false;
@@ -31,7 +32,7 @@ class Automata {
         this.restartButton = document.getElementById('restartButton');
         this.restartButton.addEventListener('click', (e) => {
             this.ticks = 0;
-            this.currentTable = this.spawnTable();
+            this.spawnTable();
         });
 
         //Pause button
@@ -49,12 +50,12 @@ class Automata {
         //Inject Life
         this.injectLifeButton = document.getElementById('injectLifeButton');
         this.injectLifeButton.addEventListener('click', (e) => {
-            this.currentTable = this.injectLife();
+            this.injectLife();
         });
 
         //gridless
-        this.toggleGrid = document.getElementById('gridEnabled');
-        this.toggleGrid.addEventListener('click', (e) => {
+        this.toggleGridButton = document.getElementById('gridEnabledButton');
+        this.toggleGridButton.addEventListener('click', (e) => {
             if(this.gap) {
                 this.gapSize = 0;
                 this.gap = false;
@@ -62,6 +63,18 @@ class Automata {
                 this.gapSize = 2;
                 this.gap = true;
             }
+        });
+
+        //Config1 modulus 8
+        this.Config1Button = document.getElementById('Config1');
+        this.Config1Button.addEventListener('click', (e) => {
+            this.startConfig(8);
+        });
+
+        //Config2 modulus 5
+        this.Config2Button = document.getElementById('Config2');
+        this.Config2Button.addEventListener('click', (e) => {
+            this.startConfig(4);
         });
     };
 
@@ -75,7 +88,7 @@ class Automata {
                 newTable[col][row] = this.spawnRate(this.spawnRateValue); // = spawnRate(rate)
             }
         }
-        return newTable;
+        this.currentTable = newTable;
     };
 
     //inject life in preexisting table
@@ -92,7 +105,7 @@ class Automata {
                 }
             }
         }
-        return newTable;
+        this.currentTable = newTable;
     };
 
     spawnRate(decimal) {
@@ -102,6 +115,22 @@ class Automata {
         }
         return false;
     };
+
+    startConfig(modulus) {
+        let newTable = [];
+        this.ticks = 0;
+        for (var col = 0; col < this.tableWidth; col++) {
+            newTable.push([]);
+            for (var row = 0; row < this.tableHeight; row++) {
+                if((col + row) % modulus == 0) {
+                    newTable[col][row] = true;
+                } else {
+                    newTable[col][row] = false;
+                }
+            }
+        }
+        this.currentTable = newTable
+    }
 
     generateNewTable() {
         let newTable = [];
